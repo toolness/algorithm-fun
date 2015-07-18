@@ -19,9 +19,15 @@ let TravelingSalesman = React.createClass({
   }
 });
 
+let points = range(3).map(function(i) {
+  return {x: 40 + i * 40, y: 40 + i * 4};
+});
+
+function trivialPath(points) {
+  return range(points.length);
+}
+
 React.render(
-  <TravelingSalesman points={range(3).map(function(i) {
-    return {x: 40 + i * 40, y: 40 + i * 4};
-  })} path={[0, 1, 2]} />,
+  <TravelingSalesman points={points} path={trivialPath(points)} />,
   document.body
 );
