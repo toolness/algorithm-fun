@@ -1,4 +1,4 @@
-import {range} from "../util.js";
+import {range, pathLength} from "../util.js";
 import algorithms from "./algorithms/index.js";
 
 let TSDiagram = React.createClass({
@@ -112,6 +112,9 @@ export let TSApp = React.createClass({
           </select>
           {" "}
           <button onClick={this.handleClearClick}>Clear</button>
+        </div>
+        <div>
+          Path length: {pathLength(path).toFixed(2)}
         </div>
       </div>
     );

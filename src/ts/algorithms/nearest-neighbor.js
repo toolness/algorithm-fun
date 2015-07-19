@@ -1,8 +1,4 @@
-function distance(a, b) {
-  let dx = a.x - b.x;
-  let dy = a.y - b.y;
-  return Math.sqrt(dx*dx + dy*dy);
-}
+import {distance} from "../../util.js";
 
 function findPath(origin, points) {
   if (points.length === 0)
