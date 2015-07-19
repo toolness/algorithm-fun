@@ -11,20 +11,31 @@ let TSDiagram = React.createClass({
       });
     }
   },
+  handlePointClick(point, e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (this.props.onClick) {
+      this.props.onClick(point);
+    }
+  },
   render() {
     return (
       <svg width={300} height={400} onClick={this.handleClick} style={{
         border: '1px solid black'
       }}>
-        {this.props.points.map(function(point, i) {
-          return <circle key={i} cx={point.x} cy={point.y} r={4}/>;
-        })}
         <polyline fill="none" stroke="black" strokeWidth={1}
                   points={this.props.path.map(function(i) {
                     let point = typeof(i) === 'number' ? this.props.points[i]
                                                        : i;
                     return point.x + "," + point.y;
                   }.bind(this)).join(" ")}/>
+        {this.props.points.map(function(point, i) {
+          return (
+            <circle
+             className="ts-point" key={i} cx={point.x} cy={point.y} r={6}
+             onClick={this.handlePointClick.bind(this, point)}/>
+          );
+        }.bind(this))}
       </svg>
     );
   }
@@ -40,13 +51,21 @@ let TSApp = React.createClass({
     };
   },
   handleDiagramClick(point) {
-    this.setState({
-      points: this.state.points.concat([point])
-    });
+    let points = this.state.points;
+
+    if (points.indexOf(point) === -1) {
+      this.setState({
+        points: points.concat([point])
+      });
+    } else {
+      this.setState({
+        points: points.filter(p => p !== point)
+      });
+    }
   },
   render() {
     let points = this.state.points;
-    let path = this.state.algorithm(points);
+    let path = points.length ? this.state.algorithm(points) : [];
 
     return (
       <div>
