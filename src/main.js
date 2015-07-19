@@ -21,7 +21,8 @@ let TSDiagram = React.createClass({
         })}
         <polyline fill="none" stroke="black" strokeWidth={1}
                   points={this.props.path.map(function(i) {
-                    let point = this.props.points[i];
+                    let point = typeof(i) === 'number' ? this.props.points[i]
+                                                       : i;
                     return point.x + "," + point.y;
                   }.bind(this)).join(" ")}/>
       </svg>
@@ -35,7 +36,7 @@ let TSApp = React.createClass({
       points: range(3).map(function(i) {
         return {x: 40 + i * 40, y: 40 + i * 4};
       }),
-      algorithm: trivialPath
+      algorithm: nearestNeighborPath
     };
   },
   handleDiagramClick(point) {
@@ -57,8 +58,44 @@ let TSApp = React.createClass({
   }
 });
 
-function trivialPath(points) {
-  return range(points.length);
+function distance(a, b) {
+  let dx = a.x - b.x;
+  let dy = a.y - b.y;
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+function nearestNeighborPath(points) {
+  function findPath(origin, points) {
+    if (points.length === 0)
+      return [];
+
+    let nearest = findNearestPoint(origin, points);
+
+    return [
+      nearest,
+      ...findPath(nearest, points.filter(point => point !== nearest))
+    ];
+  }
+
+  function findNearestPoint(origin, points) {
+    let minDistance = Infinity;
+    let nearestPoint = null;
+
+    for (let i = 0; i < points.length; i++) {
+      let p = points[i];
+      let d = distance(origin, p);
+      if (d < minDistance) {
+        minDistance = d;
+        nearestPoint = p;
+      }
+    }
+
+    return nearestPoint;
+  }
+
+  let [first, rest] = [points[0], points.slice(1)];
+
+  return [first, ...findPath(first, rest)];
 }
 
 React.render(
