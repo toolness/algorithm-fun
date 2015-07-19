@@ -35,5 +35,5 @@ function findNearestPoint(origin, points) {
 export default function(points) {
   let [first, rest] = [points[0], points.slice(1)];
 
-  return [first, ...findPath(first, rest)];
+  return [first, ...findPath(first, rest), first];
 }

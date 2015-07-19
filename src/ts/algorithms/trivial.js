@@ -1,3 +1,3 @@
 export default function(points) {
-  return points;
+  return [...points, points[0]];
 };
