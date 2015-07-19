@@ -26,12 +26,10 @@ let TSDiagram = React.createClass({
       <svg width={300} height={400} onClick={this.handleClick} style={{
         border: '1px solid black'
       }}>
-        <polyline className="ts-path"
-                  points={this.props.path.map(function(i) {
-                    let point = typeof(i) === 'number' ? this.props.points[i]
-                                                       : i;
-                    return point.x + "," + point.y;
-                  }.bind(this)).join(" ")}/>
+        <path className="ts-path"
+         d={this.props.path.map(function(point, i) {
+           return (i === 0 ? "M " : "L ") + point.x + "," + point.y;
+         }.bind(this)).join(" ")}/>
         {this.props.points.map(function(point, i) {
           return (
             <g className="ts-point" key={i}
