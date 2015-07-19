@@ -5,6 +5,7 @@ const POINT_RADIUS = 6;
 const SALESMAN_RADIUS = 3;
 
 let TSDiagram = React.createClass({
+  mixins: [React.addons.PureRenderMixin],
   handleClick(e) {
     e.preventDefault();
     let rect = this.getDOMNode().getBoundingClientRect();
@@ -26,7 +27,6 @@ let TSDiagram = React.createClass({
   // have to do it manually.
   animate() {
     if (!this.refs.path) return;
-
     let el = this.refs.animateMotion.getDOMNode();
     let d = this.refs.path.getDOMNode().getAttribute('d');
 
@@ -75,6 +75,7 @@ let TSDiagram = React.createClass({
 const STORAGE_KEY = "ts_state";
 
 export let TSApp = React.createClass({
+  mixins: [React.addons.PureRenderMixin],
   getInitialState() {
     return this.loadState() || {
       points: range(3).map(function(i) {
