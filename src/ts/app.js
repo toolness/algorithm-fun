@@ -20,11 +20,13 @@ let TSDiagram = React.createClass({
     }
   },
   render() {
+    const RADIUS = 6;
+
     return (
       <svg width={300} height={400} onClick={this.handleClick} style={{
         border: '1px solid black'
       }}>
-        <polyline fill="none" stroke="black" strokeWidth={1}
+        <polyline className="ts-path"
                   points={this.props.path.map(function(i) {
                     let point = typeof(i) === 'number' ? this.props.points[i]
                                                        : i;
@@ -32,9 +34,11 @@ let TSDiagram = React.createClass({
                   }.bind(this)).join(" ")}/>
         {this.props.points.map(function(point, i) {
           return (
-            <circle
-             className="ts-point" key={i} cx={point.x} cy={point.y} r={6}
-             onClick={this.handlePointClick.bind(this, point)}/>
+            <g className="ts-point" key={i}
+             onClick={this.handlePointClick.bind(this, point)}>
+              <circle cx={point.x} cy={point.y} r={RADIUS}/>
+              <text x={point.x + RADIUS} y={point.y + RADIUS}>{i}</text>
+            </g>
           );
         }.bind(this))}
       </svg>
