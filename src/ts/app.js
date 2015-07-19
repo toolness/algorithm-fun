@@ -42,14 +42,19 @@ let TSDiagram = React.createClass({
   }
 });
 
+const STORAGE_KEY = "ts_state";
+
 export let TSApp = React.createClass({
   getInitialState() {
-    return {
+    return this.loadState() || {
       points: range(3).map(function(i) {
         return {x: 40 + i * 40, y: 40 + i * 4};
       }),
       algorithm: 'nearestNeighborPath'
     };
+  },
+  componentDidUpdate(prevProps, prevState) {
+    this.saveState();
   },
   handleDiagramClick(point) {
     let points = this.state.points;
@@ -73,6 +78,16 @@ export let TSApp = React.createClass({
     this.setState({
       algorithm: e.target.value
     });
+  },
+  saveState() {
+    window.sessionStorage[STORAGE_KEY] = JSON.stringify(this.state);
+  },
+  loadState() {
+    try {
+      return JSON.parse(window.sessionStorage[STORAGE_KEY]);
+    } catch (e) {
+      return null;
+    }
   },
   render() {
     let points = this.state.points;
