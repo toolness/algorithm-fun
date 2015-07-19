@@ -64,6 +64,11 @@ export let TSApp = React.createClass({
       });
     }
   },
+  handleClearClick(e) {
+    this.setState({
+      points: []
+    });
+  },
   handleAlgorithmChange(e) {
     this.setState({
       algorithm: e.target.value
@@ -86,6 +91,8 @@ export let TSApp = React.createClass({
               return <option key={name} value={name}>{name}</option>;
             })}
           </select>
+          {" "}
+          <button onClick={this.handleClearClick}>Clear</button>
         </div>
       </div>
     );
