@@ -9,5 +9,3 @@ describe("util.range()", function() {
     util.range(3, 5).should.eql([3, 4]);
   });
 });
-
-console.log("import util");
