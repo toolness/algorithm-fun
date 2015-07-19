@@ -1,6 +1,9 @@
 import {range, pathLength} from "../util.js";
 import algorithms from "./algorithms/index.js";
 
+const POINT_RADIUS = 6;
+const SALESMAN_RADIUS = 3;
+
 let TSDiagram = React.createClass({
   handleClick(e) {
     e.preventDefault();
@@ -19,23 +22,48 @@ let TSDiagram = React.createClass({
       this.props.onClick(point);
     }
   },
+  // React doesn't set attributes on <animateMotion> elements, so we'll
+  // have to do it manually.
+  animate() {
+    if (!this.refs.path) return;
+
+    let el = this.refs.animateMotion.getDOMNode();
+    let d = this.refs.path.getDOMNode().getAttribute('d');
+
+    el.setAttribute('path', d);
+    el.setAttribute('dur', '5s');
+    el.setAttribute('repeatCount', 'indefinite');
+  },
+  componentDidMount() {
+    this.animate();
+  },
+  componentDidUpdate() {
+    this.animate();
+  },
   render() {
-    const RADIUS = 6;
+    let svgPath = this.props.path.map((point, i) => {
+      return (i === 0 ? "M " : "L ") + point.x + "," + point.y;
+    }).join(" ");
 
     return (
       <svg width={300} height={400} onClick={this.handleClick} style={{
         border: '1px solid black'
       }}>
-        <path className="ts-path"
-         d={this.props.path.map(function(point, i) {
-           return (i === 0 ? "M " : "L ") + point.x + "," + point.y;
-         }.bind(this)).join(" ")}/>
+        {this.props.path.length > 2
+         ? <g>
+             <path ref="path" className="ts-path" d={svgPath}/>
+             <circle cx={0} cy={0} r={SALESMAN_RADIUS} className="ts-salesman">
+               <animateMotion ref="animateMotion"/>
+             </circle>
+           </g>
+         : null}
         {this.props.points.map(function(point, i) {
           return (
             <g className="ts-point" key={i}
              onClick={this.handlePointClick.bind(this, point)}>
-              <circle cx={point.x} cy={point.y} r={RADIUS}/>
-              <text x={point.x + RADIUS} y={point.y + RADIUS}>{i}</text>
+              <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
+              <text x={point.x + POINT_RADIUS}
+                    y={point.y + POINT_RADIUS}>{i}</text>
             </g>
           );
         }.bind(this))}
