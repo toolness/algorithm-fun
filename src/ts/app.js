@@ -57,7 +57,7 @@ let TSDiagram = React.createClass({
              </circle>
            </g>
          : null}
-        {this.props.points.map(function(point, i) {
+        {this.props.points.map((point, i) => {
           return (
             <g className="ts-point" key={i}
              onClick={this.handlePointClick.bind(this, point)}>
@@ -66,7 +66,7 @@ let TSDiagram = React.createClass({
                     y={point.y + POINT_RADIUS}>{i}</text>
             </g>
           );
-        }.bind(this))}
+        })}
       </svg>
     );
   }
@@ -78,7 +78,7 @@ export let TSApp = React.createClass({
   mixins: [React.addons.PureRenderMixin],
   getInitialState() {
     return this.loadState() || {
-      points: range(3).map(function(i) {
+      points: range(3).map(i => {
         return {x: 40 + i * 40, y: 40 + i * 4};
       }),
       algorithm: 'nearestNeighborPath'
@@ -133,7 +133,7 @@ export let TSApp = React.createClass({
         <div>
           <select value={this.state.algorithm}
                   onChange={this.handleAlgorithmChange}>
-            {Object.keys(algorithms).map(function(name) {
+            {Object.keys(algorithms).map(name => {
               return <option key={name} value={name}>{name}</option>;
             })}
           </select>
