@@ -1,5 +1,5 @@
 import {range} from "../util.js";
-import nearestNeighborPath from "./algorithms/nearest-neighbor.js";
+import algorithms from "./algorithms/index.js";
 
 let TSDiagram = React.createClass({
   handleClick(e) {
@@ -48,7 +48,7 @@ export let TSApp = React.createClass({
       points: range(3).map(function(i) {
         return {x: 40 + i * 40, y: 40 + i * 4};
       }),
-      algorithm: nearestNeighborPath
+      algorithm: 'nearestNeighborPath'
     };
   },
   handleDiagramClick(point) {
@@ -64,15 +64,29 @@ export let TSApp = React.createClass({
       });
     }
   },
+  handleAlgorithmChange(e) {
+    this.setState({
+      algorithm: e.target.value
+    });
+  },
   render() {
     let points = this.state.points;
-    let path = points.length ? this.state.algorithm(points) : [];
+    let algorithm = algorithms[this.state.algorithm];
+    let path = points.length ? algorithm(points) : [];
 
     return (
       <div>
         <TSDiagram points={points}
                    path={path}
                    onClick={this.handleDiagramClick}/>
+        <div>
+          <select value={this.state.algorithm}
+                  onChange={this.handleAlgorithmChange}>
+            {Object.keys(algorithms).map(function(name) {
+              return <option key={name} value={name}>{name}</option>;
+            })}
+          </select>
+        </div>
       </div>
     );
   }
