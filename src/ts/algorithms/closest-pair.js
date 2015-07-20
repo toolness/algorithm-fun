@@ -1,4 +1,4 @@
-import {distance} from "../../util.js";
+import {distance, svgPathFromPoints} from "../../util.js";
 
 class Pair {
   constructor(allChains, chainAi, vertexAi, chainBi, vertexBi) {
@@ -56,7 +56,7 @@ export function* distinctEndpointPairs(vertexChains) {
   }
 }
 
-export default function(points) {
+function* vertexChainMerger(points) {
   let vertexChains = points.map(point => {
     return [point];
   });
@@ -71,7 +71,29 @@ export default function(points) {
       }
     }
     vertexChains = bestPair.merge();
+    yield vertexChains;
   }
+}
+
+let closestPairPath = function(points) {
+  let vertexChains = null;
+
+  for (vertexChains of vertexChainMerger(points)) {}
 
   return [...vertexChains[0], vertexChains[0][0]];
-}
+};
+
+closestPairPath.debug = function(points) {
+  return [...vertexChainMerger(points)].map(vertexChains => {
+    return (
+      <g>
+        {vertexChains.map((points, i) => {
+          return <path key={i} fill="none" stroke="gray"
+                       d={svgPathFromPoints(points)}/>;
+        })}
+      </g>
+    );
+  });
+};
+
+export {closestPairPath as default};
