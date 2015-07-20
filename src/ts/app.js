@@ -201,6 +201,7 @@ export let TSApp = React.createClass({
 
     return (
       <div>
+        <h1>Algorithm Fun: The Traveling Salesdot</h1>
         <TSDiagram points={points}
                    path={path}
                    onClick={this.handleDiagramClick}/>
@@ -214,9 +215,9 @@ export let TSApp = React.createClass({
           {" "}
           <button onClick={this.handleClearClick}>Clear</button>
         </div>
-        <div>
-          Path length: {pathLength(path).toFixed(2)}
-        </div>
+        <p>
+          Total path length is {pathLength(path).toFixed(2)}.
+        </p>
         {debugFrames.length ? <h2>Path Construction</h2> : null}
         {debugFrames}
       </div>
