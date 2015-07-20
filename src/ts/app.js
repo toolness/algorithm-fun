@@ -1,6 +1,8 @@
 import {pathLength, svgPathFromPoints} from "../util.js";
 import algorithms from "./algorithms/index.js";
 
+const DIAGRAM_WIDTH = 300;
+const DIAGRAM_HEIGHT = 400;
 const POINT_RADIUS = 6;
 const SALESMAN_RADIUS = 3;
 
@@ -34,7 +36,7 @@ let TSDebugDiagram = React.createClass({
   mixins: [React.addons.PureRenderMixin],
   render() {
     return (
-      <svg width={300} height={400} style={{
+      <svg width={DIAGRAM_WIDTH} height={DIAGRAM_HEIGHT} style={{
         border: '1px solid black'
       }}>
         {this.props.svgShape}
@@ -90,7 +92,7 @@ let TSDiagram = React.createClass({
   },
   render() {
     return (
-      <svg width={300} height={400} style={{
+      <svg width={DIAGRAM_WIDTH} height={DIAGRAM_HEIGHT} style={{
         border: '1px solid black'
       }}>
         {this.props.path.length > 2
