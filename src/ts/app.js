@@ -149,9 +149,9 @@ export let TSApp = React.createClass({
     let debugFrames = [];
 
     if (algorithm.debug) {
-      debugFrames = algorithm.debug(points).map(svgShape => {
+      debugFrames = algorithm.debug(points).map((svgShape, i) => {
         return (
-          <TSDebugDiagram points={points} svgShape={svgShape}/>
+          <TSDebugDiagram key={i} points={points} svgShape={svgShape}/>
         );
       });
     }
