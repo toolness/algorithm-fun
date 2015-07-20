@@ -1,3 +1,3 @@
-import "./util.test.js";
+import "../src/util.test.js";
 
 mocha.run();

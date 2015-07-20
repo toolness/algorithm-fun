@@ -1,4 +1,4 @@
-import * as util from "../src/util.js";
+import * as util from "./util.js";
 
 describe("util.range()", () => {
   it("should work with one argument", () => {
