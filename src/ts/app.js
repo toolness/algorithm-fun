@@ -5,6 +5,11 @@ const POINT_RADIUS = 6;
 const SALESMAN_RADIUS = 3;
 
 let TSPoint = React.createClass({
+  getDefaultProps() {
+    return {
+      className: ''
+    };
+  },
   render() {
     let point = this.props.point;
 
