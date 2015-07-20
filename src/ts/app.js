@@ -146,10 +146,10 @@ export let TSApp = React.createClass({
   render() {
     let points = this.state.points;
     let algorithm = algorithms[this.state.algorithm];
-    let path = points.length ? algorithm(points) : [];
+    let path = points.length > 1 ? algorithm(points) : [];
     let debugFrames = [];
 
-    if (algorithm.debug) {
+    if (algorithm.debug && points.length > 1) {
       debugFrames = algorithm.debug(points).map((svgShape, i) => {
         return (
           <TSDebugDiagram key={i} points={points} svgShape={svgShape}/>
