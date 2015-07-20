@@ -37,15 +37,11 @@ class Pair {
   }
 }
 
-// TODO: This actually returns points like [1,0] and [0,1], yet the
-// ordering of the points doesn't matter. Therefore, while this doesn't
-// affect the correctness of our heuristic, it does affect our efficiency.
-function* distinctEndpointPairs(vertexChains) {
+export function* distinctEndpointPairs(vertexChains) {
   for (let i = 0; i < vertexChains.length; i++) {
     let a = vertexChains[i];
-    for (let j  = 0; j < vertexChains.length; j++) {
+    for (let j = i + 1; j < vertexChains.length; j++) {
       let b = vertexChains[j];
-      if (a === b) continue;
       yield new Pair(vertexChains, i, 0, j, 0);
       if (a.length > 1) {
         yield new Pair(vertexChains, i, a.length - 1, j, 0);
