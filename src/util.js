@@ -25,6 +25,6 @@ export function pathLength(points) {
 
 export function svgPathFromPoints(path) {
   return path.map((point, i) => {
-    return (i === 0 ? "M " : "L ") + point.x + "," + point.y;
+    return (i === 0 ? "M " : "L ") + `${point.x},${point.y}`;
   }).join(" ");
 }

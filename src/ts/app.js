@@ -9,7 +9,7 @@ let TSPoint = React.createClass({
     let point = this.props.point;
 
     return (
-      <g className={"ts-point " + this.props.className}
+      <g className={`ts-point ${this.props.className}`}
          onClick={this.props.onClick}>
         <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
         <text x={point.x + POINT_RADIUS}
