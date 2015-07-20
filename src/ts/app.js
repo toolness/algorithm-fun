@@ -113,6 +113,14 @@ const DEFAULT_INITIAL_STATE = {
     {
       "x": 102,
       "y": 153
+    },
+    {
+      "x": 152,
+      "y": 324
+    },
+    {
+      "x": 171,
+      "y": 323
     }
   ],
   "algorithm": "nearestNeighborPath"
