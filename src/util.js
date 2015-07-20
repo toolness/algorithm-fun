@@ -28,3 +28,12 @@ export function svgPathFromPoints(path) {
     return (i === 0 ? "M " : "L ") + `${point.x},${point.y}`;
   }).join(" ");
 }
+
+// http://stackoverflow.com/a/8495740
+export function* partitionArray(array, chunkSize) {
+  chunkSize -= 1;
+  let i, j, temparray;
+  for (let i = 0, j = array.length; i < j; i += chunkSize) {
+    yield array.slice(i, i + chunkSize);
+  }
+}

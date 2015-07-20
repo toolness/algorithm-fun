@@ -1,4 +1,4 @@
-import {pathLength, svgPathFromPoints} from "../util.js";
+import {pathLength, svgPathFromPoints, partitionArray} from "../util.js";
 import algorithms from "./algorithms/index.js";
 
 const DIAGRAM_VIEWBOX_SIZE = 300;
@@ -46,6 +46,32 @@ let TSDebugDiagram = React.createClass({
                           label={i}/>;
         })}
       </svg>
+    );
+  }
+});
+
+let TSDebugDiagrams = React.createClass({
+  mixins: [React.addons.PureRenderMixin],
+  render() {
+    let chunks = [...partitionArray(this.props.data, 4)];
+    let points = this.props.points;
+
+    return (
+      <div>
+        {chunks.map((chunk, i) => {
+          return (
+            <div className="row" key={i}>
+              {chunk.map((svgShape, i) => {
+                return (
+                  <div className="four columns" key={i}>
+                    <TSDebugDiagram points={points} svgShape={svgShape}/>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
     );
   }
 });
@@ -143,15 +169,6 @@ const DEFAULT_INITIAL_STATE = {
   "algorithm": "nearestNeighborPath"
 };
 
-// http://stackoverflow.com/a/8495740
-function* partitionArray(array, chunkSize) {
-  chunkSize -= 1;
-  let i, j, temparray;
-  for (let i = 0, j = array.length; i < j; i += chunkSize) {
-    yield array.slice(i, i + chunkSize);
-  }
-}
-
 export let TSApp = React.createClass({
   mixins: [React.addons.PureRenderMixin],
   getDefaultProps() {
@@ -202,23 +219,6 @@ export let TSApp = React.createClass({
     let points = this.state.points;
     let algorithm = algorithms[this.state.algorithm];
     let path = points.length > 1 ? algorithm(points) : [];
-    let debugFrames = [];
-
-    if (algorithm.debug && points.length > 1) {
-      debugFrames = [...partitionArray(algorithm.debug(points), 4)].map((chunk, i) => {
-        return (
-          <div className="row" key={i}>
-            {chunk.map((svgShape, i) => {
-              return (
-                <div className="four columns" key={i}>
-                  <TSDebugDiagram points={points} svgShape={svgShape}/>
-                </div>
-              );
-            })}
-          </div>
-        );
-      });
-    }
 
     return (
       <div>
@@ -260,12 +260,12 @@ export let TSApp = React.createClass({
             </p>
           </div>
         </div>
-        {debugFrames.length
+        {algorithm.debug && points.length > 1
          ? <div>
              <h2>Path Construction</h2>
              <p>Below is a series of snapshots depicting the process through which the heuristic generated its path.</p>
              <div className="row">
-               {debugFrames}
+               <TSDebugDiagrams points={points} data={algorithm.debug(points)}/>
              </div>
            </div>
          : null}
