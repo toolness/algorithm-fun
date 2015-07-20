@@ -1,4 +1,4 @@
-import {range, pathLength, svgPathFromPoints} from "../util.js";
+import {pathLength, svgPathFromPoints} from "../util.js";
 import algorithms from "./algorithms/index.js";
 
 const POINT_RADIUS = 6;
@@ -96,16 +96,32 @@ let TSDiagram = React.createClass({
 });
 
 const STORAGE_KEY = "ts_state";
+const DEFAULT_INITIAL_STATE = {
+  "points": [
+    {
+      "x": 73,
+      "y": 117
+    },
+    {
+      "x": 71,
+      "y": 88
+    },
+    {
+      "x": 148,
+      "y": 84
+    },
+    {
+      "x": 102,
+      "y": 153
+    }
+  ],
+  "algorithm": "nearestNeighborPath"
+};
 
 export let TSApp = React.createClass({
   mixins: [React.addons.PureRenderMixin],
   getInitialState() {
-    return this.loadState() || {
-      points: range(3).map(i => {
-        return {x: 40 + i * 40, y: 40 + i * 4};
-      }),
-      algorithm: 'nearestNeighborPath'
-    };
+    return this.loadState() || DEFAULT_INITIAL_STATE;
   },
   componentDidUpdate(prevProps, prevState) {
     this.saveState();
