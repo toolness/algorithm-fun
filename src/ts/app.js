@@ -1,8 +1,11 @@
 import {pathLength, svgPathFromPoints} from "../util.js";
 import algorithms from "./algorithms/index.js";
 
-const DIAGRAM_WIDTH = 300;
-const DIAGRAM_HEIGHT = 400;
+const DIAGRAM_VIEWBOX_SIZE = 300;
+const DIAGRAM_PROPS = {
+  preserveAspectRatio: "xMinYMin meet",
+  viewBox: `0 0 ${DIAGRAM_VIEWBOX_SIZE} ${DIAGRAM_VIEWBOX_SIZE}`
+};
 const POINT_RADIUS = 6;
 const SALESMAN_RADIUS = 3;
 
@@ -36,9 +39,7 @@ let TSDebugDiagram = React.createClass({
   mixins: [React.addons.PureRenderMixin],
   render() {
     return (
-      <svg width={DIAGRAM_WIDTH} height={DIAGRAM_HEIGHT} style={{
-        border: '1px solid black'
-      }}>
+      <svg className="ts-diagram" {...DIAGRAM_PROPS}>
         {this.props.svgShape}
         {this.props.points.map((point, i) => {
           return <TSPoint className="ts-debug" key={i} point={point}
@@ -56,8 +57,8 @@ let TSDiagram = React.createClass({
     let rect = this.getDOMNode().getBoundingClientRect();
     if (this.props.onClick) {
       this.props.onClick({
-        x: e.center.x - rect.left,
-        y: e.center.y - rect.top
+        x: (e.center.x - rect.left) * DIAGRAM_VIEWBOX_SIZE / rect.width,
+        y: (e.center.y - rect.top) * DIAGRAM_VIEWBOX_SIZE / rect.height
       });
     }
   },
@@ -92,9 +93,7 @@ let TSDiagram = React.createClass({
   },
   render() {
     return (
-      <svg width={DIAGRAM_WIDTH} height={DIAGRAM_HEIGHT} style={{
-        border: '1px solid black'
-      }}>
+      <svg className="ts-diagram" {...DIAGRAM_PROPS}>
         {this.props.path.length > 2
          ? <g>
              <path ref="path" className="ts-path"
@@ -118,34 +117,48 @@ const DEFAULT_INITIAL_STATE = {
   "points": [
     {
       "x": 73,
-      "y": 117
+      "y": 67
     },
     {
       "x": 71,
-      "y": 88
+      "y": 38
     },
     {
       "x": 148,
-      "y": 84
+      "y": 34
     },
     {
       "x": 102,
-      "y": 153
+      "y": 103
     },
     {
       "x": 152,
-      "y": 324
+      "y": 274
     },
     {
       "x": 171,
-      "y": 323
+      "y": 273
     }
   ],
   "algorithm": "nearestNeighborPath"
 };
 
+// http://stackoverflow.com/a/8495740
+function* partitionArray(array, chunkSize) {
+  chunkSize -= 1;
+  let i, j, temparray;
+  for (let i = 0, j = array.length; i < j; i += chunkSize) {
+    yield array.slice(i, i + chunkSize);
+  }
+}
+
 export let TSApp = React.createClass({
   mixins: [React.addons.PureRenderMixin],
+  getDefaultProps() {
+    return {
+      idPrefix: ''
+    };
+  },
   getInitialState() {
     return this.loadState() || DEFAULT_INITIAL_STATE;
   },
@@ -192,9 +205,17 @@ export let TSApp = React.createClass({
     let debugFrames = [];
 
     if (algorithm.debug && points.length > 1) {
-      debugFrames = algorithm.debug(points).map((svgShape, i) => {
+      debugFrames = [...partitionArray(algorithm.debug(points), 4)].map((chunk, i) => {
         return (
-          <TSDebugDiagram key={i} points={points} svgShape={svgShape}/>
+          <div className="row" key={i}>
+            {chunk.map((svgShape, i) => {
+              return (
+                <div className="four columns" key={i}>
+                  <TSDebugDiagram points={points} svgShape={svgShape}/>
+                </div>
+              );
+            })}
+          </div>
         );
       });
     }
@@ -202,24 +223,52 @@ export let TSApp = React.createClass({
     return (
       <div>
         <h1>Algorithm Fun: The Traveling Salesdot</h1>
-        <TSDiagram points={points}
-                   path={path}
-                   onClick={this.handleDiagramClick}/>
-        <div>
-          <select value={this.state.algorithm}
-                  onChange={this.handleAlgorithmChange}>
-            {Object.keys(algorithms).map(name => {
-              return <option key={name} value={name}>{name}</option>;
-            })}
-          </select>
-          {" "}
-          <button onClick={this.handleClearClick}>Clear</button>
+        <div className="row">
+          <div className="eight columns">
+            <div>
+              <TSDiagram points={points}
+                         path={path}
+                         onClick={this.handleDiagramClick}/>
+            </div>
+            <div>
+              <label htmlFor={this.props.idPrefix + 'ts_alg'}>Heuristic</label>
+              <select id={this.props.idPrefix + 'ts_alg'}
+                      value={this.state.algorithm} className="u-full-width"
+                      onChange={this.handleAlgorithmChange}>
+                {Object.keys(algorithms).map(name => {
+                  return <option key={name} value={name}>{name}</option>;
+                })}
+              </select>
+              <button className="u-full-width"
+                      onClick={this.handleClearClick}>
+                Clear Diagram
+              </button>
+            </div>
+            <p>
+              Total path length is <strong>{pathLength(path).toFixed(2)}</strong>.
+            </p>
+          </div>
+          <div className="four columns">
+            <p>
+            This is a demonstration of some heuristics for the Traveling Salesdot Problem explored in <a href="http://www.algorist.com/">The Algorithm Design Manual</a>, in which a small dot must visit other slightly larger dots using the shortest possible path.
+            </p>
+            <p>
+            For more details, see the <a href="https://github.com/toolness/algorithm-fun#readme">README</a>.
+            </p>
+            <p>
+            Click (or tap) on the diagram to add or remove dots.
+            </p>
+          </div>
         </div>
-        <p>
-          Total path length is {pathLength(path).toFixed(2)}.
-        </p>
-        {debugFrames.length ? <h2>Path Construction</h2> : null}
-        {debugFrames}
+        {debugFrames.length
+         ? <div>
+             <h2>Path Construction</h2>
+             <p>Below is a series of snapshots depicting the process through which the heuristic generated its path.</p>
+             <div className="row">
+               {debugFrames}
+             </div>
+           </div>
+         : null}
       </div>
     );
   }
