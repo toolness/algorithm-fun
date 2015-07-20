@@ -4,6 +4,21 @@ import algorithms from "./algorithms/index.js";
 const POINT_RADIUS = 6;
 const SALESMAN_RADIUS = 3;
 
+let TSPoint = React.createClass({
+  render() {
+    let point = this.props.point;
+
+    return (
+      <g className={"ts-point " + this.props.className}
+         onClick={this.props.onClick}>
+        <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
+        <text x={point.x + POINT_RADIUS}
+              y={point.y + POINT_RADIUS}>{this.props.label}</text>
+      </g>
+    );
+  }
+});
+
 let TSDebugDiagram = React.createClass({
   mixins: [React.addons.PureRenderMixin],
   render() {
@@ -13,13 +28,8 @@ let TSDebugDiagram = React.createClass({
       }}>
         {this.props.svgShape}
         {this.props.points.map((point, i) => {
-          return (
-            <g className="ts-point ts-debug" key={i}>
-              <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
-              <text x={point.x + POINT_RADIUS}
-                    y={point.y + POINT_RADIUS}>{i}</text>
-            </g>
-          );
+          return <TSPoint className="ts-debug" key={i} point={point}
+                          label={i}/>;
         })}
       </svg>
     );
@@ -80,14 +90,8 @@ let TSDiagram = React.createClass({
            </g>
          : null}
         {this.props.points.map((point, i) => {
-          return (
-            <g className="ts-point" key={i}
-             onClick={this.handlePointClick.bind(this, point)}>
-              <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
-              <text x={point.x + POINT_RADIUS}
-                    y={point.y + POINT_RADIUS}>{i}</text>
-            </g>
-          );
+          return <TSPoint key={i} point={point} label={i}
+                  onClick={this.handlePointClick.bind(this, point)}/>;
         })}
       </svg>
     );
