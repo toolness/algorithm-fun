@@ -88,7 +88,7 @@ closestPairPath.debug = function(points) {
     return (
       <g>
         {vertexChains.map((points, i) => {
-          return <path key={i} fill="none" stroke="gray"
+          return <path key={i} fill="none" stroke="gray" strokeWidth="2"
                        d={svgPathFromPoints(points)}/>;
         })}
       </g>

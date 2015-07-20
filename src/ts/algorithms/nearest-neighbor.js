@@ -38,7 +38,7 @@ nearestNeighborPath.debug = function(points) {
   return range(1, points.length).map((ttl) => {
     let path = nearestNeighborPath(points, ttl).slice(0, -1);
     return (
-      <path d={svgPathFromPoints(path)} fill="none" stroke="gray" />
+      <path d={svgPathFromPoints(path)} fill="none" stroke="gray" strokeWidth="2" />
     );
   });
 };
