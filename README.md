@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/toolness/algorithm-fun.svg)](https://travis-ci.org/toolness/algorithm-fun)
+
 I'm reading through [The Algorithm Design Manual][adm] and this
 repository contains some coding experiments based on it.
 
