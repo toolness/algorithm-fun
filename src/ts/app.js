@@ -20,6 +20,7 @@ let TSPoint = React.createClass({
 
     return (
       <g className={`ts-point ${this.props.className}`}
+         onTouchEnd={this.handleClick}
          onClick={this.handleClick}>
         <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
         <text x={point.x + POINT_RADIUS}
@@ -48,13 +49,13 @@ let TSDebugDiagram = React.createClass({
 
 let TSDiagram = React.createClass({
   mixins: [React.addons.PureRenderMixin],
-  handleClick(e) {
-    e.preventDefault();
+  handleTap(e) {
+    if (e.target !== this.getDOMNode()) return;
     let rect = this.getDOMNode().getBoundingClientRect();
     if (this.props.onClick) {
       this.props.onClick({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
+        x: e.center.x - rect.left,
+        y: e.center.y - rect.top
       });
     }
   },
@@ -77,14 +78,19 @@ let TSDiagram = React.createClass({
     el.setAttribute('repeatCount', 'indefinite');
   },
   componentDidMount() {
+    this.hammertime = new Hammer(this.getDOMNode());
+    this.hammertime.on('tap', this.handleTap);
     this.animate();
   },
   componentDidUpdate() {
     this.animate();
   },
+  componentWillUnmount() {
+    this.hammertime.destroy();
+  },
   render() {
     return (
-      <svg width={300} height={400} onClick={this.handleClick} style={{
+      <svg width={300} height={400} style={{
         border: '1px solid black'
       }}>
         {this.props.path.length > 2
