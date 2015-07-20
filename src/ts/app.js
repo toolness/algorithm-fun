@@ -1,4 +1,4 @@
-import {range, pathLength} from "../util.js";
+import {range, pathLength, svgPathFromPoints} from "../util.js";
 import algorithms from "./algorithms/index.js";
 
 const POINT_RADIUS = 6;
@@ -73,17 +73,14 @@ let TSDiagram = React.createClass({
     this.animate();
   },
   render() {
-    let svgPath = this.props.path.map((point, i) => {
-      return (i === 0 ? "M " : "L ") + point.x + "," + point.y;
-    }).join(" ");
-
     return (
       <svg width={300} height={400} onClick={this.handleClick} style={{
         border: '1px solid black'
       }}>
         {this.props.path.length > 2
          ? <g>
-             <path ref="path" className="ts-path" d={svgPath}/>
+             <path ref="path" className="ts-path"
+                   d={svgPathFromPoints(this.props.path)}/>
              <circle cx={0} cy={0} r={SALESMAN_RADIUS} className="ts-salesman">
                <animateMotion ref="animateMotion"/>
              </circle>

@@ -22,3 +22,9 @@ export function pathLength(points) {
     return d + distance(points[i - 1], point);
   }, 0);
 }
+
+export function svgPathFromPoints(path) {
+  return path.map((point, i) => {
+    return (i === 0 ? "M " : "L ") + point.x + "," + point.y;
+  }).join(" ");
+}

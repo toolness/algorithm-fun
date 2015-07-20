@@ -1,4 +1,4 @@
-import {distance, range} from "../../util.js";
+import {distance, range, svgPathFromPoints} from "../../util.js";
 
 function findPath(origin, points, ttl = Infinity) {
   if (points.length === 0 || ttl < 1)
@@ -38,9 +38,7 @@ nearestNeighborPath.debug = function(points) {
   return range(1, points.length).map((ttl) => {
     let path = nearestNeighborPath(points, ttl).slice(0, -1);
     return (
-      <path d={path.map((point, i) => {
-        return (i === 0 ? "M " : "L ") + point.x + "," + point.y;
-      }).join(" ")} fill="none" stroke="gray" />
+      <path d={svgPathFromPoints(path)} fill="none" stroke="gray" />
     );
   });
 };
