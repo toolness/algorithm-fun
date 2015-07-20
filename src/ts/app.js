@@ -4,6 +4,28 @@ import algorithms from "./algorithms/index.js";
 const POINT_RADIUS = 6;
 const SALESMAN_RADIUS = 3;
 
+let TSDebugDiagram = React.createClass({
+  mixins: [React.addons.PureRenderMixin],
+  render() {
+    return (
+      <svg width={300} height={400} style={{
+        border: '1px solid black'
+      }}>
+        {this.props.svgShape}
+        {this.props.points.map((point, i) => {
+          return (
+            <g className="ts-point ts-debug" key={i}>
+              <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
+              <text x={point.x + POINT_RADIUS}
+                    y={point.y + POINT_RADIUS}>{i}</text>
+            </g>
+          );
+        })}
+      </svg>
+    );
+  }
+});
+
 let TSDiagram = React.createClass({
   mixins: [React.addons.PureRenderMixin],
   handleClick(e) {
@@ -124,6 +146,15 @@ export let TSApp = React.createClass({
     let points = this.state.points;
     let algorithm = algorithms[this.state.algorithm];
     let path = points.length ? algorithm(points) : [];
+    let debugFrames = [];
+
+    if (algorithm.debug) {
+      debugFrames = algorithm.debug(points).map(svgShape => {
+        return (
+          <TSDebugDiagram points={points} svgShape={svgShape}/>
+        );
+      });
+    }
 
     return (
       <div>
@@ -143,6 +174,8 @@ export let TSApp = React.createClass({
         <div>
           Path length: {pathLength(path).toFixed(2)}
         </div>
+        {debugFrames.length ? <h2>Path Construction</h2> : null}
+        {debugFrames}
       </div>
     );
   }
