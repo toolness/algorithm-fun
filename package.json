@@ -1,0 +1,26 @@
+{
+  "name": "algorithm-fun",
+  "version": "0.0.1",
+  "description": "Experiments with algorithms and stuff.",
+  "dependencies": {
+    "chalk": "^1.1.0",
+    "express": "^4.13.1",
+    "mocha-phantomjs": "^3.6.0",
+    "phantomjs": "^1.9.7-15"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node dev-server.js",
+    "test": "node test/run-in-phantom.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toolness/algorithm-fun.git"
+  },
+  "author": "Atul Varma <varmaa@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toolness/algorithm-fun/issues"
+  },
+  "homepage": "https://github.com/toolness/algorithm-fun#readme"
+}
