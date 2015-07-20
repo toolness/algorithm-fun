@@ -10,12 +10,17 @@ let TSPoint = React.createClass({
       className: ''
     };
   },
+  handleClick(e) {
+    if (this.props.onClick) {
+      this.props.onClick(e, this.props.point);
+    }
+  },
   render() {
     let point = this.props.point;
 
     return (
       <g className={`ts-point ${this.props.className}`}
-         onClick={this.props.onClick}>
+         onClick={this.handleClick}>
         <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
         <text x={point.x + POINT_RADIUS}
               y={point.y + POINT_RADIUS}>{this.props.label}</text>
@@ -53,7 +58,7 @@ let TSDiagram = React.createClass({
       });
     }
   },
-  handlePointClick(point, e) {
+  handlePointClick(e, point) {
     e.preventDefault();
     e.stopPropagation();
     if (this.props.onClick) {
@@ -93,7 +98,7 @@ let TSDiagram = React.createClass({
          : null}
         {this.props.points.map((point, i) => {
           return <TSPoint key={i} point={point} label={i}
-                  onClick={this.handlePointClick.bind(this, point)}/>;
+                  onClick={this.handlePointClick}/>;
         })}
       </svg>
     );
