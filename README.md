@@ -16,7 +16,8 @@ Just host the root of this repository on a web server and visit it.
 Alternatively, you can run `npm install` followed by `npm start` and visit
 http://localhost:8080/.
 
-Unit tests can be found at `/test/`.
+Unit tests can be found at `/test/`. Alternatively, you can run `npm test`,
+but debugging unit tests is best done in the browser.
 
 [adm]: http://www.algorist.com/
 [SVG animations]: https://css-tricks.com/guide-svg-animations-smil/
