@@ -9,24 +9,35 @@ const DIAGRAM_PROPS = {
 const POINT_RADIUS = 6;
 const SALESMAN_RADIUS = 3;
 
+let HammerMixin = {
+  componentDidMount() {
+    this.hammer = new Hammer(this.getDOMNode());
+  },
+  componentWillUnmount() {
+    this.hammer.destroy();
+  }
+};
+
 let TSPoint = React.createClass({
+  mixins: [HammerMixin],
   getDefaultProps() {
     return {
       className: ''
     };
   },
-  handleClick(e) {
-    if (this.props.onClick) {
-      this.props.onClick(e, this.props.point);
+  componentDidMount() {
+    if (this.props.onTap) {
+      this.hammer.on('tap', this.handleTap);
     }
+  },
+  handleTap(e) {
+    this.props.onTap(e, this.props.point);
   },
   render() {
     let point = this.props.point;
 
     return (
-      <g className={`ts-point ${this.props.className}`}
-         onTouchEnd={this.handleClick}
-         onClick={this.handleClick}>
+      <g className={`ts-point ${this.props.className}`}>
         <circle cx={point.x} cy={point.y} r={POINT_RADIUS}/>
         <text x={point.x + POINT_RADIUS}
               y={point.y + POINT_RADIUS}>{this.props.label}</text>
@@ -77,7 +88,7 @@ let TSDebugDiagrams = React.createClass({
 });
 
 let TSDiagram = React.createClass({
-  mixins: [React.addons.PureRenderMixin],
+  mixins: [React.addons.PureRenderMixin, HammerMixin],
   handleTap(e) {
     if (e.target !== this.getDOMNode()) return;
     let rect = this.getDOMNode().getBoundingClientRect();
@@ -88,9 +99,9 @@ let TSDiagram = React.createClass({
       });
     }
   },
-  handlePointClick(e, point) {
+  handlePointTap(e, point) {
     e.preventDefault();
-    e.stopPropagation();
+    e.srcEvent.stopPropagation();
     if (this.props.onClick) {
       this.props.onClick(point);
     }
@@ -107,15 +118,11 @@ let TSDiagram = React.createClass({
     el.setAttribute('repeatCount', 'indefinite');
   },
   componentDidMount() {
-    this.hammertime = new Hammer(this.getDOMNode());
-    this.hammertime.on('tap', this.handleTap);
+    this.hammer.on('tap', this.handleTap);
     this.animate();
   },
   componentDidUpdate() {
     this.animate();
-  },
-  componentWillUnmount() {
-    this.hammertime.destroy();
   },
   render() {
     return (
@@ -131,7 +138,7 @@ let TSDiagram = React.createClass({
          : null}
         {this.props.points.map((point, i) => {
           return <TSPoint key={i} point={point} label={i}
-                  onClick={this.handlePointClick}/>;
+                  onTap={this.handlePointTap}/>;
         })}
       </svg>
     );
