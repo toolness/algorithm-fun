@@ -27,11 +27,18 @@ let TSPoint = React.createClass({
   },
   componentDidMount() {
     if (this.props.onTap) {
-      this.hammer.on('tap', this.handleTap);
+      this.hammer.on('tap', e => {
+        this.props.onTap(e, this.props.point);
+      });
     }
-  },
-  handleTap(e) {
-    this.props.onTap(e, this.props.point);
+    if (this.props.onPan) {
+      this.hammer.on('panstart', e => {
+        this._panStart = this.props.point;
+      });
+      this.hammer.on('pan', e => {
+        this.props.onPan(e, this.props.point, this._panStart);
+      });
+    }
   },
   render() {
     let point = this.props.point;
@@ -106,6 +113,18 @@ let TSDiagram = React.createClass({
       this.props.onClick(point);
     }
   },
+  handlePointPan(e, point, startPoint) {
+    if (this.props.onDrag) {
+      let rect = this.getDOMNode().getBoundingClientRect();
+      let normDx = e.deltaX * DIAGRAM_VIEWBOX_SIZE / rect.width;
+      let normDy = e.deltaY * DIAGRAM_VIEWBOX_SIZE / rect.height;
+
+      this.props.onDrag(point, {
+        x: normDx - (point.x - startPoint.x),
+        y: normDy - (point.y - startPoint.y)
+      });
+    }
+  },
   // React doesn't set attributes on <animateMotion> elements, so we'll
   // have to do it manually.
   animate() {
@@ -138,7 +157,7 @@ let TSDiagram = React.createClass({
          : null}
         {this.props.points.map((point, i) => {
           return <TSPoint key={i} point={point} label={i}
-                  onTap={this.handlePointTap}/>;
+                  onTap={this.handlePointTap} onPan={this.handlePointPan}/>;
         })}
       </svg>
     );
@@ -202,6 +221,21 @@ export let TSApp = React.createClass({
       });
     }
   },
+  handleDiagramDrag(point, delta) {
+    let points = this.state.points;
+    let pointIndex = points.indexOf(point);
+
+    if (pointIndex !== -1) {
+      this.setState({
+        points: React.addons.update(points, {
+          $splice: [[pointIndex, 1, {
+            x: point.x + delta.x,
+            y: point.y + delta.y
+          }]]
+        })
+      });
+    }
+  },
   handleClearClick(e) {
     this.setState({
       points: []
@@ -235,7 +269,8 @@ export let TSApp = React.createClass({
             <div>
               <TSDiagram points={points}
                          path={path}
-                         onClick={this.handleDiagramClick}/>
+                         onClick={this.handleDiagramClick}
+                         onDrag={this.handleDiagramDrag}/>
             </div>
             <div>
               <label htmlFor={this.props.idPrefix + 'ts_alg'}>Heuristic</label>
@@ -263,7 +298,7 @@ export let TSApp = React.createClass({
             For more details, see the <a href="https://github.com/toolness/algorithm-fun#readme">README</a>.
             </p>
             <p>
-            Click (or tap) on the diagram to add or remove dots.
+            Click (or tap) on the diagram to add or remove dots. Drag to move them around.
             </p>
           </div>
         </div>
