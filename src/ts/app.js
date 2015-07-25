@@ -19,7 +19,7 @@ let HammerMixin = {
 };
 
 let TSPoint = React.createClass({
-  mixins: [HammerMixin],
+  mixins: [React.addons.PureRenderMixin, HammerMixin],
   getDefaultProps() {
     return {
       className: ''
