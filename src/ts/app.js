@@ -305,7 +305,7 @@ export let TSApp = React.createClass({
         {algorithm.debug && points.length > 1
          ? <div>
              <h2>Path Construction</h2>
-             <p>Below is a series of snapshots depicting the process through which the heuristic generated its path.</p>
+             <p>Below is a series of snapshots depicting the process through which the <strong>{this.state.algorithm}</strong> heuristic generated its path.</p>
              <div className="row">
                <TSDebugDiagrams points={points} data={algorithm.debug(points)}/>
              </div>
