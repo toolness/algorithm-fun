@@ -19,6 +19,22 @@ h1, h2 {
   border: 1px dotted gray;
 }
 
+.ts-diagram {
+  /* http://stackoverflow.com/a/4407335 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.ts-grid-line {
+  fill: none;
+  stroke: #f0f0f0;
+  pointer-events: none;
+}
+
 .ts-point:not(.ts-debug) {
   cursor: pointer;
 }
@@ -34,6 +50,7 @@ h1, h2 {
 .ts-path {
   fill: none;
   stroke: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
 }
 
 .ts-salesman {

@@ -1,7 +1,10 @@
-import {pathLength, svgPathFromPoints, partitionArray} from "../util.js";
+import {range, pathLength, svgPathFromPoints,
+        partitionArray} from "../util.js";
 import algorithms from "./algorithms/index.js";
 
 const DIAGRAM_VIEWBOX_SIZE = 300;
+const GRID_SIZE = 30;
+const GRID_SQUARES = DIAGRAM_VIEWBOX_SIZE / GRID_SIZE;
 const DIAGRAM_PROPS = {
   preserveAspectRatio: "xMinYMin meet",
   viewBox: `0 0 ${DIAGRAM_VIEWBOX_SIZE} ${DIAGRAM_VIEWBOX_SIZE}`
@@ -96,14 +99,22 @@ let TSDebugDiagrams = React.createClass({
 
 let TSDiagram = React.createClass({
   mixins: [React.addons.PureRenderMixin, HammerMixin],
+  snapToGrid(point) {
+    if (!this.props.snapToGrid) return point;
+    let {x, y} = point;
+    return {
+      x: Math.floor(x / GRID_SIZE + 0.5) * GRID_SIZE,
+      y: Math.floor(y / GRID_SIZE + 0.5) * GRID_SIZE
+    };
+  },
   handleTap(e) {
     if (e.target !== this.getDOMNode()) return;
     let rect = this.getDOMNode().getBoundingClientRect();
     if (this.props.onClick) {
-      this.props.onClick({
+      this.props.onClick(this.snapToGrid({
         x: (e.center.x - rect.left) * DIAGRAM_VIEWBOX_SIZE / rect.width,
         y: (e.center.y - rect.top) * DIAGRAM_VIEWBOX_SIZE / rect.height
-      });
+      }));
     }
   },
   handlePointTap(e, point) {
@@ -119,10 +130,10 @@ let TSDiagram = React.createClass({
       let normDx = e.deltaX * DIAGRAM_VIEWBOX_SIZE / rect.width;
       let normDy = e.deltaY * DIAGRAM_VIEWBOX_SIZE / rect.height;
 
-      this.props.onDrag(point, {
+      this.props.onDrag(point, this.snapToGrid({
         x: normDx - (point.x - startPoint.x),
         y: normDy - (point.y - startPoint.y)
-      });
+      }));
     }
   },
   // React doesn't set attributes on <animateMotion> elements, so we'll
@@ -146,6 +157,14 @@ let TSDiagram = React.createClass({
   render() {
     return (
       <svg className="ts-diagram" {...DIAGRAM_PROPS}>
+        {this.props.snapToGrid ? range(GRID_SQUARES).map(x => {
+          x = x * GRID_SIZE;
+          return <line x1={x} y1={0} x2={x} y2={DIAGRAM_VIEWBOX_SIZE} className="ts-grid-line" key={x}/>;
+        }) : null}
+        {this.props.snapToGrid ? range(GRID_SQUARES).map(y => {
+          y = y * GRID_SIZE;
+          return <line x1={0} y1={y} x2={DIAGRAM_VIEWBOX_SIZE} y2={y} className="ts-grid-line" key={y}/>;
+        }) : null}
         {this.props.path.length > 2
          ? <g>
              <path ref="path" className="ts-path"
@@ -192,7 +211,8 @@ const DEFAULT_INITIAL_STATE = {
       "y": 273
     }
   ],
-  "algorithm": "nearestNeighborPath"
+  "algorithm": "nearestNeighborPath",
+  "snapToGrid": false
 };
 
 export let TSApp = React.createClass({
@@ -246,6 +266,11 @@ export let TSApp = React.createClass({
       algorithm: e.target.value
     });
   },
+  handleSnapToGridChange(e) {
+    this.setState({
+      snapToGrid: e.target.checked
+    });
+  },
   saveState() {
     window.sessionStorage[STORAGE_KEY] = JSON.stringify(this.state);
   },
@@ -269,6 +294,7 @@ export let TSApp = React.createClass({
             <div>
               <TSDiagram points={points}
                          path={path}
+                         snapToGrid={this.state.snapToGrid}
                          onClick={this.handleDiagramClick}
                          onDrag={this.handleDiagramDrag}/>
             </div>
@@ -281,6 +307,9 @@ export let TSApp = React.createClass({
                   return <option key={name} value={name}>{name}</option>;
                 })}
               </select>
+              <label>
+                <input type="checkbox" checked={this.state.snapToGrid} onChange={this.handleSnapToGridChange}/> <span className="label-body">Snap to Grid</span>
+              </label>
               <button className="u-full-width"
                       onClick={this.handleClearClick}>
                 Clear Diagram
