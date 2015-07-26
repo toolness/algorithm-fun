@@ -179,28 +179,20 @@ const STORAGE_KEY = "ts_state";
 const DEFAULT_INITIAL_STATE = {
   "points": [
     {
-      "x": 73,
-      "y": 67
+      "x": 120,
+      "y": 180
     },
     {
-      "x": 71,
-      "y": 38
+      "x": 150,
+      "y": 210
     },
     {
-      "x": 148,
-      "y": 34
+      "x": 180,
+      "y": 150
     },
     {
-      "x": 102,
-      "y": 103
-    },
-    {
-      "x": 152,
-      "y": 274
-    },
-    {
-      "x": 171,
-      "y": 273
+      "x": 210,
+      "y": 180
     }
   ],
   "algorithm": "nearestNeighborPath",
