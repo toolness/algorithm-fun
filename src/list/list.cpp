@@ -83,7 +83,7 @@ template<typename T> struct List {
 
 int main() {
   printf("Testing List...\n");
-  printf("Size of ListNode<int> is %d.\n", sizeof(ListNode<int>));
+  printf("Size of ListNode<int> is %lu.\n", sizeof(ListNode<int>));
 
   {
     // Ensure destructor w/ empty list works.
