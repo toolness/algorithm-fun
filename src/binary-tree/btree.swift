@@ -1,7 +1,16 @@
 class BTree<T: Comparable> {
   var value: T?
+  var parent: BTree<T>?
   var left: BTree<T>?
   var right: BTree<T>?
+  private func detachChild(child: BTree<T>) {
+    if (self.left != nil && self.left!.value == child.value) {
+      self.left = nil
+    } else {
+      assert(self.right != nil && self.right!.value == child.value)
+      self.right = nil
+    }
+  }
   func contains(value: T) -> Bool {
     if self.value == nil {
       return false
@@ -21,40 +30,33 @@ class BTree<T: Comparable> {
       return self.right!.contains(value)
     }
   }
-  private func appendToLeft(tree: BTree<T>) {
-    if self.left == nil {
-      self.left = tree
-    } else {
-      self.left!.appendToLeft(tree)
-    }
-  }
-  private func appendToRight(tree: BTree<T>) {
-    if self.right == nil {
-      self.right = tree
-    } else {
-      self.right!.appendToRight(tree)
-    }
-  }
   func remove(value: T) {
-    if self.value! == value {
-      self.value = nil
-      if self.left != nil {
-        self.value = self.left!.value
-        if self.right != nil {
-          self.left!.appendToRight(self.right!)
+    let myValue = self.value!
+    if myValue == value {
+      if (self.left == nil && self.right == nil) {
+        // We're a leaf.
+        self.value = nil
+        if self.parent != nil {
+          self.parent!.detachChild(self)
         }
-        self.right = self.left!.right
-        self.left = self.left!.left
-      } else if self.right != nil {
-        self.value = self.right!.value
-        if self.left != nil {
-          self.right!.appendToLeft(self.left!)
+      } else {
+        if (self.right == nil) {
+          // We're not a leaf, but we don't have an immediate successor.
+          self.value = self.left!.value
+          self.right = self.left!.right
+          self.left = self.left!.left
+        } else {
+          // We have an immediate successor.
+          var curr = self.right!
+          while curr.left != nil {
+            curr = curr.left!
+          }
+          self.value = curr.value
+          curr.parent!.detachChild(curr)
         }
-        self.left = self.right!.left
-        self.right = self.right!.right
       }
     } else {
-      if value < self.value! {
+      if value < myValue {
         self.left!.remove(value)
       } else {
         self.right!.remove(value)
@@ -68,11 +70,13 @@ class BTree<T: Comparable> {
       if value < self.value! {
         if self.left == nil {
           self.left = BTree<T>()
+          self.left!.parent = self
         }
         self.left!.add(value)
       } else {
         if self.right == nil {
           self.right = BTree<T>()
+          self.right!.parent = self
         }
         self.right!.add(value)
       }
@@ -116,10 +120,17 @@ func testRemove() {
 
   t.add(5)
   t.remove(5)
-
   assert(t.value == nil)
   assert(!t.contains(5))
 
+  t = BTree<Int>()
+  t.add(5)
+  t.add(4)
+  t.remove(4)
+  assert(t.value! == 5)
+  assert(t.left == nil)
+
+  t = BTree<Int>()
   t.add(5)
   t.add(6)
   t.remove(5)
@@ -127,14 +138,32 @@ func testRemove() {
   assert(t.left == nil)
   assert(t.right == nil)
 
+  t = BTree<Int>()
+  t.add(6)
   t.add(4)
   t.add(7)
   t.add(5)
   t.remove(6)
+  assert(t.value! == 7)
+  assert(t.left!.value! == 4)
+  assert(t.right == nil)
+
+  t = BTree<Int>()
+  t.add(5)
+  t.add(7)
+  t.add(6)
+  t.remove(5)
+  assert(t.value! == 6)
+  assert(t.right!.value! == 7)
+  assert(t.right!.left == nil)
+
+  t = BTree<Int>()
+  t.add(5)
+  t.add(4)
+  t.add(3)
+  t.remove(5)
   assert(t.value! == 4)
-  assert(t.left == nil)
-  assert(t.right!.value! == 5)
-  assert(t.right!.right!.value! == 7)
+  assert(t.left!.value! == 3)
 }
 
 testContains()
