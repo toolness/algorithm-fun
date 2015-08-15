@@ -4,10 +4,10 @@ class BTree<T: Comparable> {
   var left: BTree<T>?
   var right: BTree<T>?
   private func detachChild(child: BTree<T>) {
-    if (self.left != nil && self.left!.value == child.value) {
+    if (self.left === child) {
       self.left = nil
     } else {
-      assert(self.right != nil && self.right!.value == child.value)
+      assert(self.right === child)
       self.right = nil
     }
   }
