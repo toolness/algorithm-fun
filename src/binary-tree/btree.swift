@@ -1,6 +1,6 @@
 class BTree<T: Comparable> {
   var value: T?
-  var parent: BTree<T>?
+  weak var parent: BTree<T>?
   var left: BTree<T>?
   var right: BTree<T>?
   private func detachChild(child: BTree<T>) {
