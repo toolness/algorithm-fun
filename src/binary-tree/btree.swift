@@ -102,17 +102,17 @@ func testContains() {
 func testAdd() {
   var t = BTree<Int>()
 
-  t.add(5);
-  assert(t.value! == 5);
+  t.add(5)
+  assert(t.value! == 5)
 
-  t.add(2);
-  assert(t.left!.value! == 2);
+  t.add(2)
+  assert(t.left!.value! == 2)
 
-  t.add(1);
-  assert(t.left!.left!.value! == 1);
+  t.add(1)
+  assert(t.left!.left!.value! == 1)
 
-  t.add(4);
-  assert(t.left!.right!.value! == 4);
+  t.add(4)
+  assert(t.left!.right!.value! == 4)
 }
 
 func testRemove() {
