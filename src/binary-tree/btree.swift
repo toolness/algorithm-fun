@@ -11,6 +11,19 @@ class BTree<T: Comparable> {
       self.right = nil
     }
   }
+  func toArray() -> [T] {
+    var out: [T] = []
+    if let left = self.left {
+      out += left.toArray()
+    }
+    if let value = self.value {
+      out += [value]
+    }
+    if let right = self.right {
+      out += right.toArray()
+    }
+    return out
+  }
   func contains(value: T) -> Bool {
     if self.value == nil {
       return false
@@ -166,8 +179,22 @@ func testRemove() {
   assert(t.left!.value! == 3)
 }
 
+func testToArray() {
+  var t = BTree<Int>()
+
+  assert(t.toArray() == [])
+
+  t.add(6)
+  t.add(4)
+  t.add(7)
+  t.add(5)
+
+  assert(t.toArray() == [4, 5, 6, 7])
+}
+
 testContains()
 testAdd()
 testRemove()
+testToArray()
 
 print("All tests passed.\n")
